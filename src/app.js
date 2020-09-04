@@ -1,11 +1,12 @@
 console.log('app.js');
 
+const API_KEY = process.env.REACT_APP_OMBd_API_KEY;
+
 import axios from 'axios';
 
 class MovieNominations extends React.Component {
 	render() {
 		console.log('movienom');
-		// const API_KEY = 'd73f30a6';
 		return (
 			<div>
 				<Header />
@@ -63,7 +64,7 @@ class Movie extends React.Component {
 		console.log('component mount');
 		axios
 			.get(
-				`http://www.omdbapi.com/?apikey=${d73f30a6}&i=${this.props.movieID}`)
+				`http://www.omdbapi.com/?apikey=${API_KEY}&i=${this.props.movieID}`)
 			.then(res => res.data)
 			.then(res => {
 					this.setState({ movieInfo:res });
