@@ -1,5 +1,7 @@
 console.log('app.js');
 
+import axios from 'axios';
+
 class MovieNominations extends React.Component {
 	render() {
 		console.log('movienom');
@@ -8,6 +10,7 @@ class MovieNominations extends React.Component {
 			<div>
 				<Header />
 				<Search />
+				<Movie />
 			</div>
 		);
 	}
@@ -48,34 +51,37 @@ class Search extends React.Component {
 	}
 }
 
-// class Movie extends React.Component {
-// 	state = {
-// 		movieInfo: {}
-// 	};
+class Movie extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			movieInfo: {}
+		};
+	}
 
-// 	componentDidMount() {
-// 		console.log('component mount');
-// 		Axios
-// 			.get(
-// 				`http://www.omdbapi.com/?apikey=${d73f30a6}&i=${this.props.movieID}`)
-// 			.then(res => res.data)
-// 			.then(res => {
-// 					this.setState({ movieInfo:res });
-// 			});
-// 	}
-// 	render() {
-// 		const {
-// 			Title,
-// 			Released
-// 		} = this.state.movieInfo;
+	componentDidMount() {
+		console.log('component mount');
+		axios
+			.get(
+				`http://www.omdbapi.com/?apikey=${d73f30a6}&i=${this.props.movieID}`)
+			.then(res => res.data)
+			.then(res => {
+					this.setState({ movieInfo:res });
+			});
+	}
+	render() {
+		const {
+			Title,
+			Released
+		} = this.state.movieInfo;
 
-// 		return (
-// 			<div>
-// 				<h2>{Title} ({Released})</h2>
-// 			</div>
-// 		);
-// 	}
-// }
+		return (
+			<div>
+				<h2>{Title} ({Released})</h2>
+			</div>
+		);
+	}
+}
 
 class Nomination extends React.Component {
 

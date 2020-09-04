@@ -6,6 +6,7 @@
   "author": "Jessica Huynh <chauhuynh.jessica@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.20.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1"
   }
