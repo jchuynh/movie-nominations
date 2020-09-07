@@ -1,17 +1,16 @@
 console.log('app.js');
 
-const API_KEY = process.env.REACT_APP_OMBd_API_KEY;
-
-import axios from 'axios';
+// const API_KEY = process.env.REACT_APP_OMBd_API_KEY;
 
 class MovieNominations extends React.Component {
+
 	render() {
 		console.log('movienom');
 		return (
 			<div>
 				<Header />
-				<Search />
-				<Movie />
+				<MovieDisplay />
+				<Nomination />
 			</div>
 		);
 	}
@@ -28,16 +27,63 @@ class Header extends React.Component {
 	}
 }
 
-class Search extends React.Component {
-	handleSearch(e) {
-		e.preventDefault();
-		
-		const search = e.target.elements.search.value;
+class MovieDisplay extends React.Component {
 
-		if (search) {
-			alert(search);
-		}
+	constructor(props) {
+		super(props);
+		this.state = {
+			movieData: {}
+		};
 	}
+
+	ComponentDidMount() {
+		axios
+			// Allows the user to search for movies on multiple categories.
+			.get(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.props.movieID}`)
+			.then(res => res.data)
+            .then(res => {
+                this.setState({ movieData: res });
+            });
+	}
+
+	render() {
+		console.log('display');
+		const {Title, Released} = this.state.movieData;
+
+		return ( 
+			<div>
+				<h2>{Title}</h2>
+				<p>{Released}</p>
+			</div>
+		);	
+	}
+}
+
+class MovieSearch extends React.Component {
+	constructor(Props) {
+		super(props);
+		this.state = {
+			movieList: [],
+			searchTerm: ''
+		};
+	}
+
+handleSearch(e) {
+		e.preventDefault();
+		axios
+			.get(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.props.searchTerm}`)
+			.then(res => res.data)
+			.then(res => {
+				if (!res.handleSearch) {
+					this.setState({ movieList: [] });
+					return
+				}
+
+				const movieList = res.handleSearch.map(movie.imdbID);
+				this.setState({movieList});
+		});
+		
+	};
 	render() {
 		console.log('search');
 		return (
@@ -52,38 +98,6 @@ class Search extends React.Component {
 	}
 }
 
-class Movie extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			movieInfo: {}
-		};
-	}
-
-	componentDidMount() {
-		console.log('component mount');
-		axios
-			.get(
-				`http://www.omdbapi.com/?apikey=${API_KEY}&i=${this.props.movieID}`)
-			.then(res => res.data)
-			.then(res => {
-					this.setState({ movieInfo:res });
-			});
-	}
-	render() {
-		const {
-			Title,
-			Released
-		} = this.state.movieInfo;
-
-		return (
-			<div>
-				<h2>{Title} ({Released})</h2>
-			</div>
-		);
-	}
-}
-
 class Nomination extends React.Component {
 
 	render() {
@@ -93,7 +107,7 @@ class Nomination extends React.Component {
 				<p>This where the user nominations will go.</p>
 				<button>Remove Nomination</button>
 			</div>
-		)
+		);
 	}
 }
 
