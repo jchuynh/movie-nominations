@@ -2,6 +2,8 @@ console.log('app.js');
 
 // const API_KEY = process.env.REACT_APP_OMBd_API_KEY;
 
+// import axios from 'axios';
+
 class MovieNominations extends React.Component {
 
 	render() {
@@ -10,6 +12,7 @@ class MovieNominations extends React.Component {
 			<div>
 				<Header />
 				<MovieDisplay />
+				<MovieSearch />
 				<Nomination />
 			</div>
 		);
@@ -60,23 +63,26 @@ class MovieDisplay extends React.Component {
 }
 
 class MovieSearch extends React.Component {
-	constructor(Props) {
+	constructor(props) {
 		super(props);
 		this.state = {
 			movieList: [],
 			searchTerm: ''
-		};
+		}
+		this.handleSearch = this.handleSearch.bind(this)
+		this.handleUpdateInput = this.handleUpdateInput.bind(this)
 	}
 
-handleSearch(e) {
+	handleSearch(e) {
 		e.preventDefault();
+		console.log('handleSearch : ', this.state.searchTerm);
 		axios
-			.get(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.props.searchTerm}`)
+			.get(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.state.searchTerm}`)
 			.then(res => res.data)
 			.then(res => {
 				if (!res.handleSearch) {
 					this.setState({ movieList: [] });
-					return
+					return;
 				}
 
 				const movieList = res.handleSearch.map(movie.imdbID);
@@ -84,15 +90,36 @@ handleSearch(e) {
 		});
 		
 	};
+
+	handleUpdateInput(e) {
+		e.preventDefault();
+		console.log('handleUpdateInput : ', this.state.searchTerm);
+		this.setState({
+			searchTerm: e.target.value
+		});
+	};
+
+	
 	render() {
-		console.log('search');
+		const { movieList } =  this.state;
+		console.log('search-box');
 		return (
 			<div>
 				<form onSubmit={this.handleSearch}>
-					<input type="text" name="search" />
+					<input type='text' placeholder='Type Here' name='searchTerm'
+					onChange = {this.handleUpdateInput}/>
 					<button>Search</button>
 				</form>
-				<p>This is where the results should be displayed.</p>
+				{movieList.length > 0 ? (
+                    movieList.map(movie => (
+                        <MovieCard movieID={movie} key={movie} />
+                    ))
+                ) : (
+                    <p>
+                        Couldn't find any movie. Please search again using
+                        another search criteria.
+					</p>
+				)}
 			</div>
 		);
 	}
